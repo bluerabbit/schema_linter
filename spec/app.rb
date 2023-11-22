@@ -12,7 +12,7 @@ module DummyApp
 end
 
 ActiveRecord::Base.establish_connection(
-  Psych.safe_load(ERB.new(File.read('spec/database.yml')).result, aliases: true)['test']
+  YAML.safe_load(ERB.new(File.read('spec/database.yml')).result, aliases: true)['test']
 )
 
 ActiveRecord::Schema.define version: 0 do
@@ -22,9 +22,12 @@ ActiveRecord::Schema.define version: 0 do
   end
 
   create_table :configurations, force: true do |t|
-    t.string :mode
+    t.string :service_name
   end
 end
 
 class User < ActiveRecord::Base
+end
+
+class Configuration < ActiveRecord::Base
 end

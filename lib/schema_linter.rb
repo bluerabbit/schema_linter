@@ -10,10 +10,10 @@ class SchemaLinter
   def initialize
     @error_table_names            = (config["error_table_names"] || [])
     @error_column_names           = (config["error_column_names"] || [])
-    @rails_reserved_table_names   = load_keywords('lib/rails_avoid_tables.txt')
-    @rails_reserved_column_names  = load_keywords('lib/rails_avoid_columns.txt')
-    @postgresql_reserved_keywords = load_keywords('lib/postgresql_keywords.txt')
-    @mysql_reserved_keywords      = load_keywords('lib/mysql_keywords.txt')
+    @rails_reserved_table_names   = load_keywords("#{root_dir}/lib/rails_avoid_tables.txt")
+    @rails_reserved_column_names  = load_keywords("#{root_dir}/lib/rails_avoid_columns.txt")
+    @postgresql_reserved_keywords = load_keywords("#{root_dir}/lib/postgresql_keywords.txt")
+    @mysql_reserved_keywords      = load_keywords("#{root_dir}/lib/mysql_keywords.txt")
   end
 
   def error_table_names
@@ -36,6 +36,10 @@ class SchemaLinter
   end
 
   private
+
+  def root_dir
+    File.expand_path('..', File.dirname(__FILE__))
+  end
 
   def config_filename
     %w[.schema_linter.yaml .schema_linter.yml].detect { |f| File.exist?(f) }

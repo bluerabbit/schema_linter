@@ -18,9 +18,10 @@ ActiveRecord::Base.establish_connection(
 ActiveRecord::Schema.define version: 0 do
   create_table :users, force: true do |t|
     t.string :name
-    t.string :role
+    t.string :role # This column is a reserved word in MySQL.
   end
 
+  # This table name conflicts with a Rails class.
   create_table :configurations, force: true do |t|
     t.string :service_name
   end

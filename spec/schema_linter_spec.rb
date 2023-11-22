@@ -9,7 +9,7 @@ describe SchemaLinter do
 
   let(:schema_linter) { SchemaLinter.new }
 
-  after { File.delete '.schema_linter.yml' if File.exists? '.schema_linter.yml' }
+  after { File.delete '.schema_linter.yml' if File.exist? '.schema_linter.yml' }
 
   describe '#error_table_names' do
     it do

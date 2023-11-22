@@ -8,8 +8,10 @@ class SchemaLinter
   end
 
   def initialize
-    @error_table_names            = (config["error_table_names"] || [])
-    @error_column_names           = (config["error_column_names"] || [])
+    @error_table_names            = (config["error_table_names"] || []).map { |v| Regexp.new(v) }
+    @error_column_names           = (config["error_column_names"] || []).map { |v| Regexp.new(v) }
+    @ignore_table_names           = (config["ignore_table_names"] || []).map { |v| Regexp.new(v) }
+    @ignore_column_names          = (config["ignore_column_names"] || []).map { |v| Regexp.new(v) }
     @rails_reserved_table_names   = load_keywords("#{root_dir}/lib/rails_avoid_tables.txt")
     @rails_reserved_column_names  = load_keywords("#{root_dir}/lib/rails_avoid_columns.txt")
     @postgresql_reserved_keywords = load_keywords("#{root_dir}/lib/postgresql_keywords.txt")
@@ -52,15 +54,14 @@ class SchemaLinter
   def models
     return @models if @models
 
-    @models ||= ActiveRecord::Base.descendants.reject(&:abstract_class).reject do |_model|
-      # TODO: ignore_models
-      # @ignore_models.include?(model.name) || @ignore_tables.include?(model.table_name)
-    end
+    @models ||= ActiveRecord::Base.descendants.reject(&:abstract_class)
   end
 
   def table_name_has_errors?(table_name)
     name = table_name.downcase
-    @error_table_names.include?(name) ||
+    return false if @ignore_table_names.any? { |regexp| name.match?(regexp) }
+
+    @error_table_names.any? { |regexp| name.match?(regexp) } ||
       @mysql_reserved_keywords.include?(name) ||
       @postgresql_reserved_keywords.include?(name) ||
       @rails_reserved_table_names.include?(name)
@@ -68,7 +69,9 @@ class SchemaLinter
 
   def column_name_has_errors?(column_name)
     name = column_name.downcase
-    @error_column_names.include?(name) ||
+    return false if @ignore_column_names.any? { |regexp| name.match?(regexp) }
+
+    @error_column_names.any? { |regexp| name.match?(regexp) } ||
       @mysql_reserved_keywords.include?(name) ||
       @postgresql_reserved_keywords.include?(name) ||
       @rails_reserved_column_names.include?(name)

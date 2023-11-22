@@ -1,29 +1,29 @@
 # schema_linter
 
-Welcome to the SchemaLinter gem! This tool ensures your database schema naming conventions are adhered to by checking both table names and column names against custom-defined rules in a YAML configuration file.
+This tool inspects whether the database schema contains any reserved words from MySQL or PostgreSQL, or any table names and column names that should not be used in Rails. Furthermore, 
+it allows for the definition of custom settings using custom definition rules in the YAML configuration file.
 
-## Install
+## Installation
 
-Put this line in your Gemfile:
+Add this line to your Gemfile:
 ```
 gem 'schema_linter'
 ```
 
-Then bundle:
+Then run:
 ```
 % bundle
 ```
 
-
 ## Usage
 
-Just run the following command in your Rails app directory.
+Simply execute the following command in your Rails app directory.
 
 ```
 % rake schema_linter
 ```
 
-If you want the rake task to fail when errors are found.
+If you want the rake task to fail when it encounters errors, use:
 
 ```
 % FAIL_ON_ERROR=1 rake schema_linter
@@ -31,16 +31,29 @@ If you want the rake task to fail when errors are found.
 
 ## Configuration
 
-Create a .schema_linter.yaml or .schema_linter.yml file in your root directory.
+Create a `.schema_linter.yaml` or `.schema_linter.yml` file in your root directory.
+
+To flag specific tables as errors, list them with regular expressions under `error_table_names`.
+To flag specific columns as errors, list them with regular expressions under `error_column_names`.
 
 ```yaml
 error_table_names:
-  - .*histories
+  - .*histories$
+  - .*info$
 
 error_column_names:
-  - role
-  - type
-  - .*data
+  - .*data$
+```
+
+To exclude specific tables from the checks, list them with regular expressions under ignore_table_names.
+To exclude specific columns from the checks, list them with regular expressions under ignore_column_names.
+
+```yaml
+ignore_table_names:
+  - ^user$
+
+ignore_column_names:
+  - ^role$
 ```
 
 ## Copyright

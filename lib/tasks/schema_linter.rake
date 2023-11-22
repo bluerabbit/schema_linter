@@ -1,6 +1,6 @@
-desc 'schema lint'
+desc 'Perform schema linting and output error table and column names. Raise an error if FAIL_ON_ERROR is set and there are errors.'
 task schema_linter: :environment do
-  schema_linter     = SchemaLinter.new
+  schema_linter = SchemaLinter.new
 
   error_table_names = schema_linter.error_table_names
   if error_table_names.present?

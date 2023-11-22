@@ -20,12 +20,14 @@ describe SchemaLinter do
       before do
         File.open '.schema_linter.yml', 'w' do |file|
           file.puts 'error_table_names:'
-          file.puts '  - users' # Treat the users table as an error
+          file.puts '  - ^users$' # Treat the users table as an error
+          file.puts 'ignore_table_names:'
+          file.puts '  - ^configurations$' # Ignore the configurations table
         end
       end
 
       it 'finds error table names.' do
-        expect(schema_linter.error_table_names).to match_array(%w[configurations users])
+        expect(schema_linter.error_table_names).to match_array(%w[users])
       end
     end
   end
@@ -39,12 +41,14 @@ describe SchemaLinter do
       before do
         File.open '.schema_linter.yml', 'w' do |file|
           file.puts 'error_column_names:'
-          file.puts '  - name' # Treat the name column as an error
+          file.puts '  - ^name$' # Treat the name column as an error
+          file.puts 'ignore_column_names:'
+          file.puts '  - ^role$' # Ignore the role column
         end
       end
 
       it 'finds error column names.' do
-        expect(schema_linter.error_column_names).to match_array(%w[users.name users.role])
+        expect(schema_linter.error_column_names).to match_array(%w[users.name])
       end
     end
   end
